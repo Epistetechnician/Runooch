@@ -179,10 +179,10 @@ const ProteinScatterPlot: React.FC<ProteinScatterPlotProps> = ({
     }));
 
   return (
-    <div className="w-full h-[500px]">
+    <div className="w-full h-[250px] sm:h-[400px]">
       <ResponsiveScatterPlot
         data={chartData}
-        margin={{ top: 60, right: 140, bottom: 70, left: 90 }}
+        margin={{ top: 20, right: 20, bottom: 40, left: 40 }}
         xScale={{ type: 'linear', min: 0, max: 'auto' }}
         yScale={{ type: 'linear', min: 0, max: 'auto' }}
         blendMode="normal"
@@ -194,17 +194,13 @@ const ProteinScatterPlot: React.FC<ProteinScatterPlotProps> = ({
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          legend: 'Protein Content (g/100g)',
-          legendPosition: 'middle',
-          legendOffset: 46,
+          format: '.0f'
         }}
         axisLeft={{
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          legend: 'Cost per Gram ($)',
-          legendPosition: 'middle',
-          legendOffset: -60,
+          format: '.0f'
         }}
         theme={{
           background: 'transparent',
@@ -243,7 +239,7 @@ const ProteinScatterPlot: React.FC<ProteinScatterPlotProps> = ({
         }}
         legends={[
           {
-            anchor: 'right',
+            anchor: 'bottom-right',
             direction: 'column',
             justify: false,
             translateX: 130,
@@ -253,7 +249,15 @@ const ProteinScatterPlot: React.FC<ProteinScatterPlotProps> = ({
             itemsSpacing: 5,
             itemDirection: 'left-to-right',
             symbolSize: 12,
-            symbolShape: 'circle'
+            symbolShape: 'circle',
+            effects: [
+              {
+                on: 'hover',
+                style: {
+                  itemOpacity: 1
+                }
+              }
+            ]
           }
         ]}
         tooltip={({ node }) => {

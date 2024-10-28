@@ -321,70 +321,57 @@ const App: React.FC<AppProps> = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2 text-white/80">
+      <div className="max-w-7xl mx-auto py-4 sm:py-6 px-3 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+          <div className="flex items-center gap-2 text-white/80 order-2 sm:order-1">
             <Calendar className="h-4 w-4" />
             <span className="text-sm capitalize">{getCurrentSeason()}</span>
           </div>
 
-          <div className="flex-1 flex flex-col items-center -mt-12">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 260,
-                damping: 20,
-                duration: 1 
-              }}
-              className="flex flex-col items-center"
-            >
+          <div className="flex-1 flex flex-col items-center -mt-6 sm:-mt-12 order-1 sm:order-2">
+            <motion.div className="flex flex-col items-center">
               <Image
                 src="/images/ReNutri_Logo.png"
                 alt="ReNutri Logo"
-                width={300}
-                height={90}
-                className="object-contain block" // Added display: block to remove extra space
+                width={200}
+                height={60}
+                className="object-contain block sm:w-[300px] sm:h-[90px]"
                 priority
               />
-              <motion.p
-                className="text-lg text-white/80 -mt-20 m-8" // Added negative margin to reduce gap
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
+              <motion.p className="text-base sm:text-lg text-white/80 -mt-12 sm:-mt-20 m-4 sm:m-8">
                 Regenerate Your Nutrition
               </motion.p>
             </motion.div>
           </div>
 
-          <LocationSelector
-            value={userPreferences.location}
-            onValueChange={(newLocation) => {
-              handleUpdatePreferences({
-                ...userPreferences,
-                location: newLocation
-              });
-            }}
-          />
+          <div className="order-3">
+            <LocationSelector
+              value={userPreferences.location}
+              onValueChange={(newLocation) => {
+                handleUpdatePreferences({
+                  ...userPreferences,
+                  location: newLocation
+                });
+              }}
+            />
+          </div>
         </div>
 
-        <Tabs defaultValue="optimizer" className="space-y-6">
-          <TabsList className="grid grid-cols-4 gap-4 bg-white/10 p-1 rounded-lg">
+        <Tabs defaultValue="optimizer" className="space-y-4 sm:space-y-6">
+          <TabsList className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 bg-white/10 p-1 rounded-lg">
             {[
               { value: 'optimizer', icon: <BarChart2 className="h-4 w-4" />, label: 'Optimizer' },
-              { value: 'locations', icon: <MapIcon className="h-4 w-4" />, label: 'Local Prices' },
-              { value: 'meal-plan', icon: <Utensils className="h-4 w-4" />, label: 'Meal Plan' },
-              { value: 'shopping', icon: <ShoppingCart className="h-4 w-4" />, label: 'Shopping' }
+              { value: 'locations', icon: <MapIcon className="h-4 w-4" />, label: 'Local' },
+              { value: 'meal-plan', icon: <Utensils className="h-4 w-4" />, label: 'Meals' },
+              { value: 'shopping', icon: <ShoppingCart className="h-4 w-4" />, label: 'Shop' }
             ].map(({ value, icon, label }) => (
               <TabsTrigger
                 key={value}
                 value={value}
-                className="data-[state=active]:bg-white data-[state=active]:text-emerald-600"
+                className="data-[state=active]:bg-white data-[state=active]:text-emerald-600 text-xs sm:text-sm"
               >
                 {icon}
-                <span className="ml-2">{label}</span>
+                <span className="ml-1 sm:ml-2">{label}</span>
               </TabsTrigger>
             ))}
           </TabsList>

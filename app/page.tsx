@@ -331,7 +331,7 @@ const App: React.FC<AppProps> = () => {
           <div className="flex-1 flex flex-col items-center -mt-6 sm:-mt-12 order-1 sm:order-2">
             <motion.div className="flex flex-col items-center">
               <Image
-                src="/images/ReNutri_Logo.png"
+                src="https://github.com/Epistetechnician/Runooch/blob/main/images/ReNutri_Logo.png?raw=true"
                 alt="ReNutri Logo"
                 width={200}
                 height={60}

@@ -2,14 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Leaf, Timer, MapPin, BarChart2 } from 'lucide-react';
 import { formatCurrency, formatWeight } from '@/lib/utils/localization';
-import { FoodAvailability } from '@/lib/types';
+import { Availability } from '@/lib/types';
 
 interface FoodDetailsProps {
   name: string;
   protein: number;
   cost: number;
   location: string;
-  availability: FoodAvailability;
+  availability: Availability;
   sustainabilityScore: number;
 }
 

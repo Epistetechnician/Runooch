@@ -333,8 +333,8 @@ const App: React.FC<AppProps> = () => {
               <Image
                 src="https://raw.githubusercontent.com/Epistetechnician/Runooch/main/images/ReNutri_Logo.png"
                 alt="ReNutri Logo"
-                width={200}
-                height={60}
+                width={400}
+                height={120}
                 className="object-contain block sm:w-[300px] sm:h-[90px]"
                 priority
               />

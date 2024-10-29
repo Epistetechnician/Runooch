@@ -359,9 +359,9 @@ const App: React.FC<AppProps> = () => {
           <TabsList className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 bg-white/10 p-1 rounded-lg">
             {[
               { value: 'optimizer', icon: <BarChart2 className="h-4 w-4" />, label: 'Optimizer' },
-              { value: 'locations', icon: <MapIcon className="h-4 w-4" />, label: 'Local' },
-              { value: 'meal-plan', icon: <Utensils className="h-4 w-4" />, label: 'Meals' },
-              { value: 'shopping', icon: <ShoppingCart className="h-4 w-4" />, label: 'Shop' }
+              { value: 'locations', icon: <MapIcon className="h-4 w-4" />, label: 'Local' }
+             // { value: 'meal-plan', icon: <Utensils className="h-4 w-4" />, label: 'Meals' },
+             // { value: 'shopping', icon: <ShoppingCart className="h-4 w-4" />, label: 'Shop' }
             ].map(({ value, icon, label }) => (
               <TabsTrigger
                 key={value}

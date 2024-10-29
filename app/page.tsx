@@ -328,7 +328,7 @@ const App: React.FC<AppProps> = () => {
             <span className="text-sm capitalize">{getCurrentSeason()}</span>
           </div>
 
-          <div className="flex-1 flex flex-col items-center -mt-6 sm:-mt-12 order-1 sm:order-2">
+          <div className="flex-1 flex flex-col items-center -mt-1 sm:-mt-1 order-1 sm:order-2">
             <motion.div className="flex flex-col items-center">
               <Image
                 src="https://raw.githubusercontent.com/Epistetechnician/Runooch/main/images/ReNutri_Logo.png"

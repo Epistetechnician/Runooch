@@ -338,9 +338,7 @@ const App: React.FC<AppProps> = () => {
                 className="object-contain block sm:w-[300px] sm:h-[90px]"
                 priority
               />
-              <motion.p className="text-base sm:text-lg text-white/80 -mt-12 sm:-mt-20 m-4 sm:m-8">
-                Regenerate Your Nutrition
-              </motion.p>
+        
             </motion.div>
           </div>
 

@@ -163,6 +163,7 @@ interface ContentType {
   nfts: DataSourceContent
   eigenlayer: DataSourceContent
   'best-practices': GuideContent
+
 }
 
 // Add this type definition near the top with other interfaces
@@ -244,16 +245,16 @@ const content: ContentType = {
           title: 'Authentication Setup',
           code: `const client = new BlockchainAPI({
   defiLlama: {
-    apiKey: process.env.DEFILLAMA_KEY,
-    rateLimit: 300  // requests per 5 minutes
+    // No API key needed for DefiLlama
+    rateLimit: 300
   },
   dune: {
     apiKey: process.env.DUNE_KEY,
-    rateLimit: 100  // requests per day
+    rateLimit: '500k credits/month'
   },
   bitquery: {
     apiKey: process.env.BITQUERY_KEY,
-    rateLimit: 100  // requests per day
+    rateLimit: 150  // requests per minute
   }
 });`
         },
@@ -1364,8 +1365,7 @@ const subscription = client.subscribe({
           buyAmount
           sellAmount
         }
-      }
-    }"
+      }"
   }'`,
         rateLimit: '100 requests/minute'
       },
@@ -1508,7 +1508,6 @@ const subscription = client.subscription({
       pool {
         token0 { symbol }
         token1 { symbol }
-      }
       amount0
       amount1
       amountUSD
@@ -1790,21 +1789,30 @@ baseUrl: 'https://api.dune.com'
         example: [
           {
             description: 'GraphQL Query with Authentication',
-            code: `const response = await fetch('https://api.thegraph.com/subgraphs/name/aave/protocol-v2', {
-method: 'POST',
-headers: {
-  'Content-Type': 'application/json',
-  'Authorization': \`Bearer \${process.env.GRAPH_API_KEY}\`
-},
-body: JSON.stringify({
-  query: \`{
-    markets(first: 5) {
-      id
-      inputToken { symbol }
-      outputToken { symbol }
-    }
-  }\`
-})
+            code: `const response = await fetch('https://api.thegraph.com/subgraphs/name/aave/protocol-v3', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': \`Bearer \${process.env.GRAPH_API_KEY}\`
+  },
+  body: JSON.stringify({
+    query: \`{
+      markets(first: 5, orderBy: totalValueLockedUSD, orderDirection: desc) {
+        id
+        inputToken {
+          id
+          symbol
+          decimals
+        }
+        rates {
+          variableBorrowRate
+          stableBorrowRate
+          liquidityRate
+        }
+        totalValueLockedUSD
+      }
+    }\`
+  })
 });`
           }
         ],
@@ -2836,26 +2844,24 @@ includeFunding: true
         await this.wait(attempt);
       }
     }
-    throw new Error('Max retries exceeded');
-  }
 
-  private shouldRetry(error: any, attempt: number, retryable?: boolean): boolean {
-    return (
-      retryable !== false &&
-      attempt < this.MAX_RETRIES &&
-      this.RETRYABLE_ERRORS.includes(error.status)
-    );
-  }
+    private shouldRetry(error: any, attempt: number, retryable?: boolean): boolean {
+      return (
+        retryable !== false &&
+        attempt < this.MAX_RETRIES &&
+        this.RETRYABLE_ERRORS.includes(error.status)
+      );
+    }
 
-  private enhanceError(error: any): Error {
-    const message = this.ERROR_MESSAGES[error.status] || error.message;
-    return new Error(\`API Error: \${message} (Status: \${error.status})\`);
-  }
+    private enhanceError(error: any): Error {
+      const message = this.ERROR_MESSAGES[error.status] || error.message;
+      return new Error(\`API Error: \${message} (Status: \${error.status})\`);
+    }
 
-  private wait(attempt: number): Promise<void> {
-    const delay = Math.pow(2, attempt) * 1000;
-    return new Promise(resolve => setTimeout(resolve, delay));
-  }
+    private wait(attempt: number): Promise<void> {
+      const delay = Math.pow(2, attempt) * 1000;
+      return new Promise(resolve => setTimeout(resolve, delay));
+    }
 }`
         },
         {
@@ -2973,23 +2979,211 @@ class DataValidator {
       ]
     }
   }
- // End of content object
-
 // Define valid data sources
 const dataSources = [
-  'defillama', 
-  'dune', 
-  'footprint', 
+  'defillama',
+  'dune',
+  'footprint',
   'flipside',
   'messari',
   'bitquery',
-  'subgraphs', 
-  'dex', 
-  'lending', 
-  'metrics'
+  'subgraphs',  // Keep using 'subgraphs' instead of 'theGraph'
+  'dex',
+  'lending',
+  'metrics',
+  'authentication',
+  'rateLimits',
+  'guides',
+  'liquidStaking',
+  'protocols',
+  'tvl',
+  'bridges',
+  'perpetuals',
+  'synthetics',
+  'nfts',
+  'eigenlayer',
+  'best-practices',
+  'hyperliquid'
 ] as const
 
 type DataSource = typeof dataSources[number]
+
+const CURRENT_RATE_LIMITS = {
+  defillama: {
+    free: '1000 requests/5min',
+    note: 'No API key required. Custom limits available.'
+  },
+  dune: {
+    free: '40 requests/min',
+    paid: {
+      standard: '3M credits/month',
+      enterprise: 'Custom limits'
+    }
+  },
+  bitquery: {
+    free: '150 requests/min',
+    pro: '500 requests/min',
+    enterprise: 'Custom limits'
+  },
+  theGraph: {
+    free: 'Varies by subgraph',
+    paid: {
+      L1: '100k queries/day',
+      L2: '1M queries/day'
+    }
+  },
+  footprint: {
+    free: '1000 requests/day',
+    pro: '10000 requests/day'
+  },
+  messari: {
+    free: '20 requests/min',
+    pro: '100 requests/min',
+    enterprise: 'Custom limits'
+  }
+}
+
+const HYPERLIQUID_API = {
+  name: 'Hyperliquid (Hypurrscan)',
+  baseUrl: 'https://hyperliquid.xyz/api',
+  description: 'Real-time perpetuals trading data and analytics for the Hyperliquid network',
+  authentication: 'No authentication required',
+  rateLimits: {
+    websocket: 'No explicit limits',
+    rest: '10 requests/second'
+  },
+  features: [
+    'Real-time order book data',
+    'Trading history',
+    'Position tracking',
+    'Market statistics',
+    'Liquidation data',
+    'Vault analytics'
+  ],
+  endpoints: [
+    {
+      path: '/info',
+      method: 'GET',
+      description: 'Get basic information about all markets',
+      parameters: [],
+      response: {
+        type: 'object',
+        items: {
+          universe: 'array',
+          vaults: 'array',
+          states: 'object'
+        }
+      }
+    },
+    {
+      path: '/meta_info',
+      method: 'GET',
+      description: 'Get metadata about coins and markets',
+      parameters: [],
+      response: {
+        type: 'object',
+        example: `{
+  "coins": [
+    {
+      "name": "BTC",
+      "decimals": 8,
+      "id": 0
+    },
+    // ... other coins
+  ],
+  "universe": [
+    {
+      "name": "BTC-USD",
+      "szDecimals": 8,
+      "pxDecimals": 6
+    }
+    // ... other markets
+  ]
+}`
+      }
+    },
+    {
+      path: '/user/{user_address}',
+      method: 'GET',
+      description: 'Get user-specific trading information',
+      parameters: [
+        {
+          name: 'user_address',
+          type: 'string',
+          required: true,
+          description: 'Ethereum address of the user'
+        }
+      ],
+      response: {
+        type: 'object',
+        items: {
+          positions: 'array',
+          orders: 'array',
+          accountData: 'object'
+        }
+      }
+    }
+  ],
+  websocket: {
+    endpoint: 'wss://hyperliquid.xyz/ws',
+    channels: [
+      {
+        name: 'orderbook',
+        description: 'Real-time order book updates',
+        subscription: `{
+  "type": "sub",
+  "channel": "orderbook",
+  "coin": "BTC"
+}`
+      },
+      {
+        name: 'trades',
+        description: 'Real-time trade updates',
+        subscription: `{
+  "type": "sub",
+  "channel": "trades",
+  "coin": "BTC"
+}`
+      }
+    ]
+  },
+  sdkExample: {
+    title: 'Hyperliquid SDK Usage',
+    description: 'Track perpetual futures data using SDK',
+    code: `import { HyperliquidAPI } from '@hyperliquid/sdk';
+
+const api = new HyperliquidAPI();
+
+// Get market data
+const marketData = await api.getMarketData('BTC-USD');
+
+// Subscribe to real-time updates
+api.subscribeToTrades('BTC-USD', (trade) => {
+  console.log('New trade:', trade);
+});
+
+// Get user positions
+const positions = await api.getUserPositions('0x...');
+
+// Monitor liquidation events
+api.subscribeLiquidations((event) => {
+  console.log('Liquidation event:', event);
+});`
+  },
+  bestPractices: [
+    'Use WebSocket for real-time data',
+    'Implement reconnection logic',
+    'Handle rate limits gracefully',
+    'Cache static market data',
+    'Batch user queries when possible'
+  ]
+}
+
+// Add to existing API_PROVIDERS object
+const API_PROVIDERS = {
+  // ... existing providers ...
+  hyperliquid: HYPERLIQUID_API
+}
 
 const ApiDocs = () => {
   const [activeTab, setActiveTab] = useState<ContentKey>('overview')
@@ -3021,7 +3215,7 @@ const ApiDocs = () => {
         { id: 'flipside', label: 'Flipside Crypto' },
         { id: 'messari', label: 'Messari' },
         { id: 'bitquery', label: 'BitQuery' },
-        { id: 'subgraphs', label: 'The Graph' }
+        { id: 'subgraphs', label: 'The Graph' }  // Added lightning bolt for flair and using 'subgraphs' as the ID
       ]
     },
     {

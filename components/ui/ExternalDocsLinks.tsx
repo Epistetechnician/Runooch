@@ -24,14 +24,25 @@ const links: ExternalLink[] = [
   },
   {
     name: 'Messari',
-    url: 'https://messari.io/api/docs',
+    url: 'https://messari.io/screener?newScreen=true&type=asset',
     description: 'Messari API Documentation'
   },
   {
     name: 'BitQuery',
     url: 'https://bitquery.io/docs',
     description: 'BitQuery GraphQL API Docs'
+  },
+  {
+    name: 'Flipside Crypto',
+    url: 'https://api.flipsidecrypto.com/docs',
+    description: 'Flipside Crypto API Documentation'
+  },
+  {
+    name: 'Hypurrscan',
+    url: 'https://api.hypurrscan.io/ui/#/Tokens/hypurrscanAPI.get_holders_with_limit',
+    description: 'Hypurrscan API'
   }
+
 ]
 
 export const ExternalDocsLinks = () => {

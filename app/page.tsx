@@ -182,7 +182,7 @@ interface Section {
 
 const content: ContentType = {
   overview: {
-    title: 'Blockchain Data API Documentation',
+    title: 'OnchainData API Documentation',
     description: `A path towards a unified blockchain data API provides enterprise-grade access to comprehensive DeFi, NFT, and blockchain analytics 
       through a single, standardized interface. By aggregating data from industry-leading providers this offers real-time insights, 
       historical data, and advanced analytics capabilities for institutional investors and DeFi applications.`,
